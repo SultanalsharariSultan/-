@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🚩 Red Flag Test — هل أنت العلم الأحمر؟</title>
+<meta name="description" content="اختبار كوميدي عالمي: اكتشف إن كنت Green Flag أم Red Flag في علاقاتك." />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, sans-serif; }
+  .card { transition: transform .2s ease, box-shadow .2s ease; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.15); }
+  .fade-in { animation: fadeIn .4s ease both; }
+  @keyframes fadeIn { from {opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} }
+  .glow { box-shadow: 0 0 40px rgba(239,68,68,.35); }
+</style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 text-gray-800">
+
+<div id="app" class="max-w-xl mx-auto px-5 py-10"></div>
+
+<script>
+/* ============ البيانات: الأسئلة المجانية ============ */
+const QUESTIONS = [
+  { q: "توك تشيك في هاتف شريكك؟", opts: [
+    {t:"مستحيل، احترام الخصوصية أهم شي", s:0},
+    {t:"بس لو شكيت فيه شوي 👀", s:2},
+    {t:"عادي، أنا أول من يشوف كل رسايله", s:3},
+  ]},
+  { q: "لما تختلفون، وش يصير؟", opts: [
+    {t:"نتكلم ونحل الموضوع بهدوء", s:0},
+    {t:"أسكت أياماً وأخليه يخمن السبب", s:3},
+    {t:"أرجع أذكّره بكل غلطة سوّاها من زمان", s:2},
+  ]},
+  { q: "صديقه المقرب ما يعجبك، وش تسوي؟", opts: [
+    {t:"أتقبله، مو لازم يعجبني كل ناسه", s:0},
+    {t:"أطلب منه يقلل التواصل معه شوي شوي", s:2},
+    {t:"أحط له 'اختر بيني وبينه'", s:3},
+  ]},
+  { q: "شريكك حقق إنجاز كبير، ردة فعلك؟", opts: [
+    {t:"أفتخر فيه وأحتفل معه بكل قلبي", s:0},
+    {t:"أفرح بس جوايا شوية غيرة", s:1},
+    {t:"أقارن نفسي فيه وأحس إني أقل", s:2},
+  ]},
+  { q: "لما تزعل، طريقتك بالتعبير؟", opts: [
+    {t:"أقول اللي بخاطري بصراحة وهدوء", s:0},
+    {t:"أرمي تلميحات وأنتظر يفهم لحاله", s:2},
+    {t:"أكسر الجو كامل وأخلي الكل يحس فيها", s:3},
+  ]},
+  { q: "وش موقفك من 'الاختفاء المفاجئ' (Ghosting)؟", opts: [
+    {t:"غير مقبول أبداً، لازم توضيح ولو صعب", s:0},
+    {t:"سويتها قبل مرة أو مرتين... بصراحة", s:2},
+    {t:"أسلوبي المفضل بصراحة، أسهل من المواجهة", s:3},
+  ]},
+];
+
+/* أسئلة إضافية تُفتح بعد الدفع (Savage Mode) */
+const SAVAGE_QUESTIONS = [
+  { q: "شريكك السابق يراسلك 'بالغلط'، وش تسوي؟", opts: [
+    {t:"أتجاهل وأخبر شريكي الحالي مباشرة", s:0},
+    {t:"أرد بأدب... وما أذكر لحد", s:2},
+    {t:"أحتفظ بالمحادثة 'للذكرى' بس", s:3},
+  ]},
+  { q: "طريقتك في كسب أي نقاش حتى لو غلطان؟", opts: [
+    {t:"ما أكسب، أعترف إذا غلطت", s:0},
+    {t:"أغيّر الموضوع فجأة لين ينسى", s:2},
+    {t:"أرفع صوتي شوي لين يتراجع الطرف الثاني", s:3},
+  ]},
+  { q: "لو حصلت على رقم شخص ثاني وأنت بعلاقة؟", opts: [
+    {t:"أحذفه فوراً بدون تفكير", s:0},
+    {t:"أحتفظ فيه 'احتياط' بس ما أستخدمه", s:2},
+    {t:"وش المشكلة؟ صداقة بس 😏", s:3},
+  ]},
+];
+
+/* ============ نتائج وتصنيفات ============ */
+const RESULTS = [
+  { max: 6,  emoji: "🟢", title: "علم أخضر معتمد", color: "from-emerald-400 to-teal-500",
+    lines: ["أنت النوع اللي الناس تتمنى تلقاه.", "علاقاتك السابقة على الأغلب تتكلم عنك بخير 😌", "بصراحة... مشتبه فيك إنك مثالي أكثر من اللازم."] },
+  { max: 12, emoji: "🟡", title: "علم أصفر مريب", color: "from-amber-400 to-yellow-500",
+    lines: ["مو سيء، بس فيه شوية 'تفاصيل' تحتاج تراجعها.", "أحياناً تكون رومانسي، وأحياناً غامض شوي 🧐", "شريكك المستقبلي بيحتاج صبر... ونصف."] },
+  { max: 18, emoji: "🔴", title: "علم أحمر خطير", color: "from-red-500 to-rose-600",
+    lines: ["يا صديقي، لازم نتكلم بجد.", "درامياتك تكفي لموسمين مسلسل تركي 🎭", "لو فيه كورس 'كيف تكون شريك أسهل'، سجّل فيه اليوم."] },
+  { max: 24, emoji: "☢️", title: "كارثة نووية عاطفية", color: "from-fuchsia-600 to-purple-700",
+    lines: ["مبروك، وصلت لمستوى أسطوري من العلامات الحمراء.", "حتى التقويم يحس بالخطر وأنت قريب منه.", "ننصحك بعلاقة... مع نفسك، لفترة."] },
+];
+
+function getResult(score){ return RESULTS.find(r => score <= r.max) || RESULTS[RESULTS.length-1]; }
+
+/* ============ حالة التطبيق ============ */
+let state = { step: 0, score: 0, answers: [], savageUnlocked: localStorage.getItem('rf_savage') === '1' };
+
+const app = document.getElementById('app');
+
+/* التحقق من رجوع الدفع عبر Stripe (?paid=1) */
+const params = new URLSearchParams(location.search);
+if (params.get('paid') === '1') {
+  localStorage.setItem('rf_savage', '1');
+  state.savageUnlocked = true;
+  history.replaceState({}, '', location.pathname);
+}
+
+function activeQuestions(){
+  return state.savageUnlocked ? [...QUESTIONS, ...SAVAGE_QUESTIONS] : QUESTIONS;
+}
+
+/* ============ الشاشات ============ */
+function renderIntro(){
+  app.innerHTML = `
+  <div class="fade-in text-center">
+    <div class="text-6xl mb-4">🚩</div>
+    <h1 class="text-3xl font-extrabold mb-2">هل أنت الـ Red Flag؟</h1>
+    <p class="text-gray-600 mb-8">6 مواقف سريعة، وإجابات صادقة (ولو مو مريحة 😅)، بتكشف نوع "العلَم" اللي تمثله في علاقاتك.</p>
+    <button onclick="startQuiz()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-500 text-white font-bold text-lg shadow-lg hover:opacity-90 transition">
+      ابدأ الاختبار 🔥
+    </button>
+    <p class="text-xs text-gray-400 mt-4">مجاني بالكامل • بياناتك ما تطلع من جهازك</p>
+  </div>`;
+}
+
+function startQuiz(){ state = {...state, step:0, score:0, answers:[]}; renderQuestion(); }
+
+function renderQuestion(){
+  const qs = activeQuestions();
+  const q = qs[state.step];
+  app.innerHTML = `
+  <div class="fade-in">
+    <div class="flex justify-between text-xs text-gray-500 mb-2">
+      <span>سؤال ${state.step+1} من ${qs.length}</span>
+      <span>${Math.round((state.step/qs.length)*100)}%</span>
+    </div>
+    <div class="w-full h-2 bg-gray-200 rounded-full mb-6 overflow-hidden">
+      <div class="h-full bg-gradient-to-r from-rose-500 to-orange-500 transition-all" style="width:${(state.step/qs.length)*100}%"></div>
+    </div>
+    <h2 class="text-xl font-bold mb-6">${q.q}</h2>
+    <div class="space-y-3">
+      ${q.opts.map((o,i)=>`
+        <button onclick="answer(${o.s})" class="card w-full text-right p-4 rounded-xl bg-white border border-gray-200 hover:border-rose-400 font-medium">
+          ${o.t}
+        </button>`).join('')}
+    </div>
+  </div>`;
+}
+
+function answer(score){
+  state.score += score;
+  state.step++;
+  const qs = activeQuestions();
+  if (state.step >= qs.length) renderResult();
+  else renderQuestion();
+}
+
+function renderResult(){
+  const qs = activeQuestions();
+  const maxPossible = qs.length * 3;
+  const normalized = Math.round((state.score / maxPossible) * 24); // توحيد المقياس دائماً على 24
+  const r = getResult(normalized);
+  const roast = r.lines[Math.floor(Math.random()*r.lines.length)];
+
+  app.innerHTML = `
+  <div class="fade-in text-center">
+    <div id="resultCard" class="card rounded-3xl p-8 bg-gradient-to-br ${r.color} text-white glow mb-6">
+      <div class="text-6xl mb-3">${r.emoji}</div>
+      <h2 class="text-2xl font-extrabold mb-2">${r.title}</h2>
+      <p class="opacity-95">${roast}</p>
+      <div class="mt-4 text-xs opacity-80">Red Flag Test 🚩 • yourdomain.com</div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 mb-4">
+      <button onclick="downloadCard()" class="py-3 rounded-xl bg-white border border-gray-300 font-semibold hover:bg-gray-50">
+        📥 تحميل البطاقة
+      </button>
+      <button onclick="shareResult()" class="py-3 rounded-xl bg-gray-900 text-white font-semibold hover:opacity-90">
+        📤 مشاركة
+      </button>
+    </div>
+
+    <button onclick="startQuiz()" class="text-sm text-gray-500 underline mb-8">إعادة الاختبار</button>
+
+    ${!state.savageUnlocked ? `
+    <div class="border-t pt-6 mt-2">
+      <p class="text-sm text-gray-600 mb-3">👀 جاوبت بأمان... جرب <b>Savage Mode</b>: أسئلة وردود أقسى وأصدق.</p>
+      <a href="STRIPE_PAYMENT_LINK_HERE?client_reference_id=savage" 
+         class="inline-block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-bold">
+        🔥 افتح Savage Mode — $2.99
+      </a>
+    </div>` : `<p class="text-sm text-purple-600 font-semibold">✅ Savage Mode مفعّل</p>`}
+
+    <a href="STRIPE_SUPPORT_LINK_HERE" target="_blank" class="block mt-6 text-xs text-gray-400 hover:text-gray-600">
+      ☕ إذا عجبك التطبيق، ادعمنا بفنجان قهوة
+    </a>
+  </div>`;
+}
+
+/* ============ توليد بطاقة قابلة للتحميل عبر Canvas ============ */
+function downloadCard(){
+  const qs = activeQuestions();
+  const maxPossible = qs.length * 3;
+  const normalized = Math.round((state.score / maxPossible) * 24);
+  const r = getResult(normalized);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 800; canvas.height = 800;
+  const ctx = canvas.getContext('2d');
+
+  const grad = ctx.createLinearGradient(0,0,800,800);
+  grad.addColorStop(0, '#f43f5e');
+  grad.addColorStop(1, '#f59e0b');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,800,800);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#fff';
+  ctx.font = '120px sans-serif';
+  ctx.fillText(r.emoji, 400, 330);
+
+  ctx.font = 'bold 48px sans-serif';
+  wrapText(ctx, r.title, 400, 420, 640, 55);
+
+  ctx.font = '28px sans-serif';
+  ctx.globalAlpha = .95;
+  wrapText(ctx, r.lines[0], 400, 520, 600, 38);
+  ctx.globalAlpha = 1;
+
+  ctx.font = '22px sans-serif';
+  ctx.fillText('🚩 Red Flag Test', 400, 740);
+
+  const link = document.createElement('a');
+  link.download = 'red-flag-result.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+  const words = text.split(' ');
+  let line = '', lines = [];
+  for (const w of words){
+    const test = line + w + ' ';
+    if (ctx.measureText(test).width > maxWidth && line){ lines.push(line); line = w + ' '; }
+    else line = test;
+  }
+  lines.push(line);
+  const startY = y - ((lines.length-1)*lineHeight)/2;
+  lines.forEach((l,i)=> ctx.fillText(l.trim(), x, startY + i*lineHeight));
+}
+
+function shareResult(){
+  const qs = activeQuestions();
+  const maxPossible = qs.length * 3;
+  const normalized = Math.round((state.score / maxPossible) * 24);
+  const r = getResult(normalized);
+  const text = `طلعت "${r.title}" ${r.emoji} في اختبار Red Flag! جرب أنت كمان:`;
+  const url = location.origin + location.pathname;
+
+  if (navigator.share) {
+    navigator.share({ text, url }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(`${text} ${url}`);
+    alert('تم نسخ النتيجة والرابط! الصقها في أي مكان 📋');
+  }
+}
+
+renderIntro();
+</script>
+</body>
+</html>
